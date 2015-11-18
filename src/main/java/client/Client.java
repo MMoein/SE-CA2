@@ -1,18 +1,42 @@
 package client;
 
+import deposit.Deposit;
+import deposit.Transaction;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * Created by Moein on 11/18/15.
  */
 public class Client {
     public static void main(String args[]){
-        String serverName = "localhost";
+        /* TODO
+            parse xml and send it to server
+         */
+        String serverName = "127.0.0.1";
+        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
         int port = 8080;
         try
         {
+
+            SAXParser saxParser = saxParserFactory.newSAXParser();
+            XMLHandler handler = new XMLHandler();
+            saxParser.parse(new File("/Users/Moein/IdeaProjects/SE-CA2/src/main/java/client/terminal.xml"), handler);
+            System.out.println(handler.getType());
+            System.out.println(handler.getServerIP());
+//            List<Deposit> depositList = handler.getDepositList();
+            for (Transaction t:handler.getTransactionList()
+                 ) {
+                System.out.println(t.getId());
+            }
+
             System.out.println("Connecting to " + serverName +
                     " on port " + port);
             Socket client = new Socket(serverName, port);
@@ -31,6 +55,10 @@ public class Client {
             System.out.println("سرور پاسخگو نمی باشد.");
         } catch(IOException e)
         {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
             e.printStackTrace();
         }
     }

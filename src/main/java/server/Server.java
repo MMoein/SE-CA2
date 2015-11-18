@@ -93,8 +93,10 @@ public class Server extends Thread {
 
         try
         {
+
             Thread t = new Server(port.intValue());
             t.start();
+//            System.out.println("here");
         }catch(IOException e)
         {
             e.printStackTrace();
