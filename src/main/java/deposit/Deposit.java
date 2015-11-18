@@ -10,15 +10,15 @@ public class Deposit {
     private int bound;
 
 
-    public int getBalance() {
+    public Integer getBalance() {
         return balance;
     }
 
-    public int getBound() {
+    public Integer getBound() {
         return bound;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

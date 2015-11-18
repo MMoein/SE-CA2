@@ -1,18 +1,1 @@
-{
-  "port" : 8080,
-  "deposits" : [
-    {
-      "customer" : "Ali Alavi",
-      "id" : "33227781",
-      "initialBalance" : "1,000",
-      "upperBound" : "1,000,000"
-    },
-    {
-      "customer" : "Reza Rezaei",
-      "id" : "35527439",
-      "initialBalance" : "0",
-      "upperBound" : "0"
-    }
-  ],
-  "outLog" : "server.out"
-}
+{"port":8080,"outLog":"server.out","deposits":[{"id":"33227781","initialBalance":"4,000","customer":"Ali Alavi","upperBound":"1,000,000"},{"id":"35527439","initialBalance":"0","customer":"Reza Rezaei","upperBound":"0"}]}

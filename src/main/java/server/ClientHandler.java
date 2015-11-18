@@ -1,5 +1,7 @@
 package server;
 
+import deposit.Deposit;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,13 +17,29 @@ public class ClientHandler extends Thread {
         try {
             System.out.println("Just connected to "
                     + server.getRemoteSocketAddress());
-            DataInputStream in =
-                    new DataInputStream(server.getInputStream());
-            System.out.println(in.readUTF());
-            DataOutputStream out =
-                    new DataOutputStream(server.getOutputStream());
-            out.writeUTF("Thank you for connecting to "
-                    + server.getLocalSocketAddress() + "\nGoodbye!");
+            while(true) {
+                DataInputStream in =
+                        new DataInputStream(server.getInputStream());
+                String input = in.readUTF();
+                System.out.println(input);
+                if(input.equals("END")){
+                    DataOutputStream out =
+                            new DataOutputStream(server.getOutputStream());
+                    out.writeUTF("FINISH");
+                    break;
+                }
+                String[] command = input.split(" ");
+                boolean result = processCommand(command);
+                DataOutputStream out =
+                        new DataOutputStream(server.getOutputStream());
+                if(result)
+                    out.writeUTF("OK");
+                else
+                    out.writeUTF("ERR");
+//                    out.writeUTF("Thank you for connecting to "
+//                        + server.getLocalSocketAddress() + "\nGoodbye!");
+
+            }
             server.close();
         }catch(SocketTimeoutException s)
         {
@@ -33,6 +51,23 @@ public class ClientHandler extends Thread {
 //            break;
         }
     }
+
+    private boolean processCommand(String[] command) {
+        for (Deposit dep:
+             Server.deposits) {
+            if(dep.getId() == Integer.parseInt(command[1])){
+                boolean result;
+                if(command[2].equals("deposit")){
+                    result = dep.deposit(Integer.parseInt(command[3]));
+                }else{
+                    result = dep.withdraw(Integer.parseInt(command[3]));
+                }
+                return result;
+            }
+        }
+        return false;
+    }
+
     public ClientHandler(Socket server){
         this.server = server;
     }

@@ -20,6 +20,9 @@ import java.util.Scanner;
 public class Server extends Thread {
 
     private ServerSocket serverSocket;
+    public static ArrayList<Deposit> deposits;
+    public static Long port;
+    public static String logPath;
 
     public Server(int port) throws IOException
     {
@@ -37,16 +40,6 @@ public class Server extends Thread {
                 Socket server = serverSocket.accept();
                 Thread t = new ClientHandler(server);
                 t.start();
-//                System.out.println("Just connected to "
-//                        + server.getRemoteSocketAddress());
-//                DataInputStream in =
-//                        new DataInputStream(server.getInputStream());
-//                System.out.println(in.readUTF());
-//                DataOutputStream out =
-//                        new DataOutputStream(server.getOutputStream());
-//                out.writeUTF("Thank you for connecting to "
-//                        + server.getLocalSocketAddress() + "\nGoodbye!");
-//                server.close();
             }catch(SocketTimeoutException s)
             {
                 System.out.println("Socket timed out!");
@@ -61,9 +54,9 @@ public class Server extends Thread {
 
     public static void main(String args[]){
         JSONParser parser = new JSONParser();
-        ArrayList <Deposit> deposits = new ArrayList<Deposit>();
-        Long port = null;
-        String logPath = "";
+        deposits = new ArrayList<Deposit>();
+        port = null;
+        logPath = "";
         try {
 
             Object obj = parser.parse(new FileReader("/Users/Moein/IdeaProjects/SE-CA2/src/main/java/server/core.json"));
@@ -101,10 +94,38 @@ public class Server extends Thread {
         while (input.hasNext()) {
             String command = input.next();
             if(command.equals("sync")){
-
+                syncDeposits();
             }else{
                 System.out.println("ورودی صحیح نیست.");
             }
         }
+    }
+
+    private static void syncDeposits() {
+        JSONObject toFile = new JSONObject();
+        JSONArray jsonDeposits = new JSONArray();
+
+        for (Deposit dep:
+             deposits) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("customer",dep.getCustomer());
+            jsonObject.put("id",dep.getId().toString());
+            jsonObject.put("initialBalance",Utils.encodeAmount(dep.getBalance()));
+            jsonObject.put("upperBound",Utils.encodeAmount(dep.getBound()));
+            jsonDeposits.add(jsonObject);
+        }
+        toFile.put("port",port);
+        toFile.put("deposits",jsonDeposits);
+        toFile.put("outLog" , logPath);
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter("/Users/Moein/IdeaProjects/SE-CA2/src/main/java/server/core.json");
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(toFile.toString());
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("syncing has been finished");
     }
 }

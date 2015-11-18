@@ -39,6 +39,10 @@ public class XMLHandler extends DefaultHandler {
         return serverIP;
     }
 
+    public String getOutLog() {
+        return outLog;
+    }
+
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes){
         if(qName.equalsIgnoreCase("terminal")) {
@@ -51,7 +55,7 @@ public class XMLHandler extends DefaultHandler {
             outLog = attributes.getValue("path");
         }else if(qName.equalsIgnoreCase("transaction")){
             int id = Integer.parseInt(attributes.getValue("id"));
-            String type = attributes.getType("type");
+            String type = attributes.getValue("type");
             String amount = attributes.getValue("amount");
             String deposit = attributes.getValue("deposit");
             transactionList.add(new Transaction(id,type,deposit,amount));
