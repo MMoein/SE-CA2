@@ -15,23 +15,17 @@ public class ClientHandler extends Thread {
     Socket server;
     public void run(){
         try {
-            System.out.println("Just connected to "
-                    + server.getRemoteSocketAddress());
+            DataOutputStream out = new DataOutputStream(server.getOutputStream());
+            DataInputStream in = new DataInputStream(server.getInputStream());
+            System.out.println("Just connected to " + server.getRemoteSocketAddress());
             while(true) {
-                DataInputStream in =
-                        new DataInputStream(server.getInputStream());
                 String input = in.readUTF();
-                System.out.println(input);
                 if(input.equals("END")){
-                    DataOutputStream out =
-                            new DataOutputStream(server.getOutputStream());
                     out.writeUTF("FINISH");
                     break;
                 }
                 String[] command = input.split(" ");
                 boolean result = processCommand(command);
-                DataOutputStream out =
-                        new DataOutputStream(server.getOutputStream());
                 if(result)
                     out.writeUTF("OK");
                 else
@@ -55,9 +49,11 @@ public class ClientHandler extends Thread {
                 }else{
                     result = dep.withdraw(Integer.parseInt(command[3]));
                 }
+                Server.logger.info(command.toString() + " done with result of " + result );
                 return result;
             }
         }
+        Server.logger.info("deposit id : " + command[1] + " Not found" );
         return false;
     }
 

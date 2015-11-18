@@ -1,4 +1,4 @@
 <response>
-<transaction id="1" result="OK" />
-<transaction id="2" result="ERR" />
+	<transaction id="1" result="OK" />
+	<transaction id="2" result="ERR" />
 </response>

@@ -13,6 +13,9 @@ import java.net.SocketTimeoutException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 
 /**
@@ -24,6 +27,8 @@ public class Server extends Thread {
     public static ArrayList<Deposit> deposits;
     public static Long port;
     public static String logPath;
+    public static Logger logger = Logger.getLogger("ServerLog");
+
 
     public Server(int port) throws IOException
     {
@@ -66,6 +71,11 @@ public class Server extends Thread {
 
             port = (Long) jsonObject.get("port");
             logPath = (String) jsonObject.get("outLog");
+            FileHandler fh = new FileHandler(logPath);
+            logger.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+            logger.info("server started");
             JSONArray JSONDeposits = (JSONArray) jsonObject.get("deposits");
             for (Object deposit:
                  JSONDeposits) {
@@ -80,7 +90,7 @@ public class Server extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
-            e.printStackTrace();
+            System.out.println("فرمت فایل ورودی صحیح نمی باشد.");
         }
 
         try
@@ -118,6 +128,8 @@ public class Server extends Thread {
         toFile.put("port",port);
         toFile.put("deposits",jsonDeposits);
         toFile.put("outLog" , logPath);
+
+
         FileWriter fw = null;
         try {
             fw = new FileWriter("./src/main/java/server/core.json");
@@ -128,19 +140,6 @@ public class Server extends Thread {
             e.printStackTrace();
         }
 
-
-        try {
-            File file = new File(logPath);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            fw = new FileWriter(file.getAbsoluteFile() , true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write("server synced\n");
-            bw.close();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
         System.out.println("syncing has been finished");
     }
 }

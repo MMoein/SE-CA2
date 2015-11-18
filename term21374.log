@@ -1,4 +1,6 @@
-transaction 1 OKtransaction 2 ERRtransaction 1 OK
-transaction 2 ERR
-transaction 1 OK
-transaction 2 ERR
+Nov 18, 2015 11:22:21 PM client.Client main
+INFO: client started
+Nov 18, 2015 11:22:21 PM client.Client main
+INFO: transaction 1 OK
+Nov 18, 2015 11:22:21 PM client.Client main
+INFO: transaction 2 ERR
