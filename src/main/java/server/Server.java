@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -59,7 +60,7 @@ public class Server extends Thread {
         logPath = "";
         try {
 
-            Object obj = parser.parse(new FileReader("/Users/Moein/IdeaProjects/SE-CA2/src/main/java/server/core.json"));
+            Object obj = parser.parse(new FileReader("./src/main/java/server/core.json"));
 
             JSONObject jsonObject = (JSONObject) obj;
 
@@ -119,11 +120,27 @@ public class Server extends Thread {
         toFile.put("outLog" , logPath);
         FileWriter fw = null;
         try {
-            fw = new FileWriter("/Users/Moein/IdeaProjects/SE-CA2/src/main/java/server/core.json");
+            fw = new FileWriter("./src/main/java/server/core.json");
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(toFile.toString());
             bw.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            File file = new File(logPath);
+
+            // if file doesnt exists, then create it
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            fw = new FileWriter(file.getAbsoluteFile() , true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write("server synced\n");
+            bw.close();
+        }catch(IOException e){
             e.printStackTrace();
         }
         System.out.println("syncing has been finished");

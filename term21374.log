@@ -1,0 +1,4 @@
+transaction 1 OKtransaction 2 ERRtransaction 1 OK
+transaction 2 ERR
+transaction 1 OK
+transaction 2 ERR

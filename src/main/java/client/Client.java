@@ -11,20 +11,21 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by Moein on 11/18/15.
  */
 public class Client {
     public static void main(String args[]){
-        /* TODO
-            save response
-         */
+
         String logFile = "";
         String response = "";
         String serverName = "";
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
         int port = -1;
+
+
         try
         {
             /*
@@ -32,10 +33,23 @@ public class Client {
              */
             SAXParser saxParser = saxParserFactory.newSAXParser();
             XMLHandler handler = new XMLHandler();
-            saxParser.parse(new File("/Users/Moein/IdeaProjects/SE-CA2/src/main/java/client/terminal.xml"), handler);
+            saxParser.parse(new File("./src/main/java/client/terminal.xml"), handler);
             serverName = handler.getServerIP();
             port = handler.getPort();
             logFile = handler.getOutLog();
+
+
+            // if file doesnt exists, then create it
+
+            File file = new File(logFile);
+
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             /*
                 connecting to server.
              */
@@ -60,9 +74,13 @@ public class Client {
                         new DataInputStream(inFromServer);
                 String result = in.readUTF();
                 System.out.println("Server says " + result);
+                FileWriter fw = new FileWriter(file.getAbsoluteFile() , true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write("transaction " + t.getId() + " " + result + "\n");
+                bw.close();
+
                 response = response.concat("<transaction id=\""+t.getId()+"\" result=\"" + result + "\" />\n");
             }
-
             /*
             Disconnecting from server
              */
@@ -74,7 +92,7 @@ public class Client {
                     new DataInputStream(inFromServer);
             System.out.println("Server says " + in.readUTF());
             client.close();
-            File file = new File("response.xml");
+            file = new File("response.xml");
 
             // if file doesnt exists, then create it
             if (!file.exists()) {
