@@ -36,19 +36,12 @@ public class ClientHandler extends Thread {
                     out.writeUTF("OK");
                 else
                     out.writeUTF("ERR");
-//                    out.writeUTF("Thank you for connecting to "
-//                        + server.getLocalSocketAddress() + "\nGoodbye!");
-
             }
             server.close();
-        }catch(SocketTimeoutException s)
-        {
+        }catch(SocketTimeoutException s) {
             System.out.println("Socket timed out!");
-//            break;
-        }catch(IOException e)
-        {
+        }catch(IOException e) {
             e.printStackTrace();
-//            break;
         }
     }
 

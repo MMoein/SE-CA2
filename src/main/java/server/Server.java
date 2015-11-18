@@ -131,8 +131,6 @@ public class Server extends Thread {
 
         try {
             File file = new File(logPath);
-
-            // if file doesnt exists, then create it
             if (!file.exists()) {
                 file.createNewFile();
             }

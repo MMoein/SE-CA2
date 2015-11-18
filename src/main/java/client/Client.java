@@ -92,24 +92,31 @@ public class Client {
                     new DataInputStream(inFromServer);
             System.out.println("Server says " + in.readUTF());
             client.close();
-            file = new File("response.xml");
 
-            // if file doesnt exists, then create it
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write("<response>\n" + response + "</response>");
-            bw.close();
+            makeResponse(response);
+
         } catch(ConnectException e){
             System.out.println("سرور پاسخگو نمی باشد.");
         } catch(IOException e) {
             e.printStackTrace();
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            System.out.println("فرمت فایل ورودی صحیح نمی باشد.");
         } catch (SAXException e) {
-            e.printStackTrace();
+            System.out.println("فرمت فایل ورودی صحیح نمی باشد.");
         }
+    }
+
+
+    private static void makeResponse(String response) throws IOException {
+        File file = new File("response.xml");
+
+        // if file doesnt exists, then create it
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        FileWriter fw = new FileWriter(file.getAbsoluteFile());
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write("<response>\n" + response + "</response>");
+        bw.close();
     }
 }
