@@ -1,4 +1,6 @@
 package server;
+import deposit.Deposit;
+import deposit.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -8,6 +10,8 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 
 /**
@@ -31,16 +35,18 @@ public class Server extends Thread {
                 System.out.println("Waiting for client on port " +
                         serverSocket.getLocalPort() + "...");
                 Socket server = serverSocket.accept();
-                System.out.println("Just connected to "
-                        + server.getRemoteSocketAddress());
-                DataInputStream in =
-                        new DataInputStream(server.getInputStream());
-                System.out.println(in.readUTF());
-                DataOutputStream out =
-                        new DataOutputStream(server.getOutputStream());
-                out.writeUTF("Thank you for connecting to "
-                        + server.getLocalSocketAddress() + "\nGoodbye!");
-                server.close();
+                Thread t = new ClientHandler(server);
+                t.start();
+//                System.out.println("Just connected to "
+//                        + server.getRemoteSocketAddress());
+//                DataInputStream in =
+//                        new DataInputStream(server.getInputStream());
+//                System.out.println(in.readUTF());
+//                DataOutputStream out =
+//                        new DataOutputStream(server.getOutputStream());
+//                out.writeUTF("Thank you for connecting to "
+//                        + server.getLocalSocketAddress() + "\nGoodbye!");
+//                server.close();
             }catch(SocketTimeoutException s)
             {
                 System.out.println("Socket timed out!");
@@ -55,7 +61,9 @@ public class Server extends Thread {
 
     public static void main(String args[]){
         JSONParser parser = new JSONParser();
+        ArrayList <Deposit> deposits = new ArrayList<Deposit>();
         Long port = null;
+        String logPath = "";
         try {
 
             Object obj = parser.parse(new FileReader("/Users/Moein/IdeaProjects/SE-CA2/src/main/java/server/core.json"));
@@ -63,26 +71,16 @@ public class Server extends Thread {
             JSONObject jsonObject = (JSONObject) obj;
 
             port = (Long) jsonObject.get("port");
-            System.out.println(port);
-            JSONArray deposits = (JSONArray) jsonObject.get("deposits");
+            logPath = (String) jsonObject.get("outLog");
+            JSONArray JSONDeposits = (JSONArray) jsonObject.get("deposits");
             for (Object deposit:
-                 deposits) {
+                 JSONDeposits) {
                 JSONObject dep = (JSONObject)deposit;
-                System.out.println(dep.get("customer"));
+                int id = Integer.parseInt((String) dep.get("id"));
+                int initialBalance = Utils.decodeAmount((String) dep.get("initialBalance"));
+                int upperBound = Utils.decodeAmount((String) dep.get("upperBound"));
+                deposits.add(new Deposit(id , initialBalance , upperBound , (String)dep.get("customer")));
             }
-//            String name = (String) jsonObject.get("name");
-//            System.out.println(name);
-//
-//            long age = (Long) jsonObject.get("age");
-//            System.out.println(age);
-//
-//            // loop array
-//            JSONArray msg = (JSONArray) jsonObject.get("messages");
-//            Iterator<String> iterator = msg.iterator();
-//            while (iterator.hasNext()) {
-//                System.out.println(iterator.next());
-//            }
-//            while (true);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -93,13 +91,20 @@ public class Server extends Thread {
 
         try
         {
-
             Thread t = new Server(port.intValue());
             t.start();
-//            System.out.println("here");
         }catch(IOException e)
         {
             e.printStackTrace();
+        }
+        Scanner input = new Scanner(System.in);
+        while (input.hasNext()) {
+            String command = input.next();
+            if(command.equals("sync")){
+
+            }else{
+                System.out.println("ورودی صحیح نیست.");
+            }
         }
     }
 }

@@ -37,10 +37,27 @@ public class Deposit {
     public void setCustomer(String customer) {
         this.customer = customer;
     }
-
     public void setId(int id) {
         this.id = id;
     }
+
+    public synchronized boolean withdraw(int amount){
+        if(balance>=amount){
+            balance = balance - amount;
+            return true;
+        }
+        return false;
+    }
+
+    public synchronized boolean deposit(int amount){
+        if(amount+balance<=bound){
+            balance = balance + amount;
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public Deposit(int id, int balance, int bound, String customer){
         this.id = id;
         this.balance = balance;

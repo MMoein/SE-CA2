@@ -26,18 +26,11 @@ public class Transaction {
     }
 
     public Transaction(int id,String type,String deposit,String amount){
-        this.amount = decodeAmount(amount);
+        this.amount = Utils.decodeAmount(amount);
         this.deposit = deposit;
         this.type = type;
         this.id = id;
     }
 
-    private int decodeAmount(String amount) {
-        String cleanedAmount = "";
-        String[] stringArr = amount.split(",");
-        for(int i=0;i<stringArr.length;i++){
-            cleanedAmount = cleanedAmount.concat(stringArr[i]);
-        }
-        return Integer.parseInt(cleanedAmount);
-    }
+
 }

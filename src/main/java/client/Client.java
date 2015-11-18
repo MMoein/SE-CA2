@@ -18,17 +18,19 @@ import java.util.List;
 public class Client {
     public static void main(String args[]){
         /* TODO
-            parse xml and send it to server
+            save response
          */
-        String serverName = "127.0.0.1";
+        String serverName = "";
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-        int port = 8080;
+        int port = -1;
         try
         {
 
             SAXParser saxParser = saxParserFactory.newSAXParser();
             XMLHandler handler = new XMLHandler();
             saxParser.parse(new File("/Users/Moein/IdeaProjects/SE-CA2/src/main/java/client/terminal.xml"), handler);
+            serverName = handler.getServerIP();
+            port = handler.getPort();
             System.out.println(handler.getType());
             System.out.println(handler.getServerIP());
 //            List<Deposit> depositList = handler.getDepositList();
